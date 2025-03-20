@@ -1,28 +1,26 @@
 ﻿using System;
+using System.IO;
 using Spectre.Console;
-using Spectre.Console.ImageSharp;
-using SixLabors.ImageSharp;
-using SixLabors.ImageSharp.PixelFormats;
 
 class Program
 {
     static void Main(string[] args)
     {
-        string fileName = "tux.jpg";
-        int width = 24;
+        string defaultImage = "tux.jpg";
+        int defaultWidth = 24;
 
-        if (args.Length >= 2)
+        string imagePath = args.Length > 0 ? args[0] : defaultImage;
+        int width = args.Length > 1 && int.TryParse(args[1], out int w) ? w : defaultWidth;
+
+        if (!File.Exists(imagePath))
         {
-            fileName = args[0];
-            if (!int.TryParse(args[1], out width) || width <= 0)
-            {
-                Console.WriteLine("Erro: A largura deve ser um número inteiro positivo.");
-                return;
-            }
+            Console.WriteLine($"Erro: O ficheiro '{imagePath}' não foi encontrado.");
+            return;
         }
+
         try
         {
-            var image = new CanvasImage(fileName);
+            var image = new CanvasImage(imagePath);
             image.MaxWidth(width);
             AnsiConsole.Write(image);
         }
